@@ -12,3 +12,8 @@ It just does this check in the images directory, not the metadata directory. If 
 
 # CSV file
 I've begun filling in some extra times with books I enjoy. In some cases, I've simply added to times where there already were some entries, to include books I like. I have also added some entries where times did not exist already.
+
+# Missing Times
+I've written a script to filter the csv and pull out a list of missing times, which I will keep up to date in a publicly accessible google spreadsheet for now - https://docs.google.com/spreadsheets/d/1yBXgmuMIZrLkkigTW2vqU3ugJMpyWyEhQPGm9qNHuZ8/edit?usp=sharing
+
+Feel free to add one if you come across a time while reading!
