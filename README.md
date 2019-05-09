@@ -16,4 +16,6 @@ I've begun filling in some extra times with books I enjoy. In some cases, I've s
 # Missing Times
 I've written a script to filter the csv and pull out a list of missing times, which I will keep up to date in a publicly accessible google spreadsheet for now - https://docs.google.com/spreadsheets/d/1yBXgmuMIZrLkkigTW2vqU3ugJMpyWyEhQPGm9qNHuZ8/edit?usp=sharing
 
+There is also a Google Form to gather any times people come across while reading: https://docs.google.com/forms/d/1TpjlPc1VI9-tnI7yPSvtHE6FefLJ4IbbtVKwfy7C9ds/edit
+
 Feel free to add one if you come across a time while reading!
