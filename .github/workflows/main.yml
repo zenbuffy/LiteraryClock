@@ -17,7 +17,7 @@ jobs:
         ref: ${{ github.head_ref }}
 
     - name: Generate images
-      run: rm -rf images && php quote_to_images.php
+      run: rm -rf images && php quote_to_image.php
 
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
