@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('max_execution_time', 3000);
 
-if (!is_dir('images/metadata') && !mkdir('images/metadata', true)) {
+if (!is_dir('images/metadata') && !mkdir('images/metadata', 0777, true)) {
     throw new \RuntimeException(sprintf('Directory "%s" was not created', 'images/metadata'));
 }
 
