@@ -4,33 +4,36 @@
 // Jaap Meijers, 2018
 
 error_reporting(E_ALL);
-ini_set("display_errors", 1);
+ini_set('display_errors', 1);
 ini_set('max_execution_time', 3000);
+
+if (!is_dir('images/metadata') && !mkdir('images/metadata', 0777, true)) {
+    throw new \RuntimeException(sprintf('Directory "%s" was not created', 'images/metadata'));
+}
 
 $imagenumber = 0;
 $previoustime = 0;
 
 // pad naar font file
 putenv('GDFONTPATH=' . realpath('.'));
-$font_path = "LinLibertine_RZ.otf";
-$font_path_bold = "LinLibertine_RB.otf";
-$creditFont = "LinLibertine_RZI.otf";
+$font_path = 'LinLibertine_RZah.ttf';
+$font_path_bold = 'LinLibertine_RBah.ttf';
+$creditFont = 'LinLibertine_RZIah.ttf';
 
-
-// get the quotes (including title and author) from a CSV file, 
+// get the quotes (including title and author) from a CSV file,
 // and create unique images for them, one without and one with title and author
 $row = 1;
-if (($handle = fopen("litclock_annotated_improved.csv", "r")) !== FALSE) {
-    while (($data = fgetcsv($handle, 1000, "|")) !== FALSE) {
+if (($handle = fopen('litclock_annotated_improved.csv', 'r')) !== FALSE) {
+    while (($data = fgetcsv($handle, 1000, '|')) !== FALSE) {
         $num = count($data);
         $row++;
         $time = $data[0];
         $timestring = trim($data[1]);
         $quote = $data[2];
-        $quote = trim(preg_replace('/\s+/', ' ', $quote)); 
+        $quote = trim(preg_replace('/\s+/', ' ', $quote));
         $title = trim($data[3]);
         $author = trim($data[4]);
-        //echo $time."|".$quote." - ".$author." ".$title;
+        //echo $time.'|'.$quote.' - '.$author.' '.$title;
 
 
         // if ($row < 10)
@@ -41,9 +44,8 @@ if (($handle = fopen("litclock_annotated_improved.csv", "r")) !== FALSE) {
 }
 
 
-
-function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author) {
-
+function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author)
+{
     global $font_path;
     global $font_path_bold;
     global $creditFont;
@@ -54,25 +56,23 @@ function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author) {
     //text margin
     $margin = 26;
 
-
-
     // first, find the timestring to be highlighted in the quote
     // determine the position of the timestring in the quote (so after how many words it appears)
-    $timestringStarts = count(explode(' ', stristr($quote, $timestring, true)))-1;
+    $timestringStarts = count(explode(' ', stristr($quote, $timestring, true))) - 1;
     // how many words long the timestring is
-    $timestring_wordcount = count(explode(' ', $timestring))-1;
+    $timestring_wordcount = count(explode(' ', $timestring)) - 1;
 
     // divide text in an array of words, based on spaces
     $quote_array = explode(' ', $quote);
 
-    $time = substr($time, 0, 2).substr($time, 3, 2);
-    
+    $time = substr($time, 0, 2) . substr($time, 3, 2);
+
 
     // font size to start with looking for a fit. a long quote of 125 words or 700 characters gives us a font size of 23, so 18 is a safe start.
     $font_size = 18;
 
 
-    // serial number for when there is more than one quote for a certain minute 
+    // serial number for when there is more than one quote for a certain minute
     global $imagenumber;
     global $previoustime;
     if ($time == $previoustime) {
@@ -83,125 +83,122 @@ function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author) {
     $previoustime = $time;
 
     // Does the image already exist? No point in creating it again.
-    $checkpath = realpath('images/quote_'.$time.'_'.$imagenumber.'.png');
+    $checkpath = realpath('images/quote_' . $time . '_' . $imagenumber . '.png');
 
-    if (!file_exists($checkpath)){
-    printf("Making a new image for ".$time."<br />");
-    ///// QUOTE /////
-    // find the font size (recursively) for an optimal fit of the text in the bounding box
-    // and create the image.
-    list($png_image) = fitText($quote_array, $width, $height, $font_size, $timestringStarts, $timestring_wordcount, $margin);
-
-
-    print "Image for " . $time .'_'. $imagenumber . "\n";
-    echo "<br /><br />";
-
-    
-    // Save the image
-    imagepng($png_image, 'images/quote_'.$time.'_'.$imagenumber.'.png');
+    if (!file_exists($checkpath)) {
+        printf('Making a new image for ' . $time . PHP_EOL);
+        if (PHP_SAPI !== 'cli') echo '<br />';
+        ///// QUOTE /////
+        // find the font size (recursively) for an optimal fit of the text in the bounding box
+        // and create the image.
+        list($png_image) = fitText($quote_array, $width, $height, $font_size, $timestringStarts, $timestring_wordcount, $margin);
 
 
-    ///// METADATA /////
-    // create another version, with title and author in the image
+        print 'Image for ' . $time . '_' . $imagenumber . PHP_EOL;
+        if (PHP_SAPI !== 'cli') echo '<br /><br />';
 
-    
-    // define text color
-    $grey = imagecolorallocate($png_image, 125, 125, 125);
-    $black = imagecolorallocate($png_image, 0, 0, 0);
 
-    $dash = "—";
+        // Save the image
+        imagepng($png_image, 'images/quote_' . $time . '_' . $imagenumber . '.png');
 
-    $credits = $title . ", " . $author;
-    $creditFont_size = 18;
 
-    // if the metadata are longer than 45 characters, replace a space by a newline from the end,
-    // just as long the paragraph is getting smaller. stop when the box gets wider again.
-    list($metawidth, $metaheight, $metaleft, $metatop) = measureSizeOfTextbox($creditFont_size, $creditFont, $dash . $credits);
-    
-    if ( $metawidth > 500 ) {
+        ///// METADATA /////
+        // create another version, with title and author in the image
 
-        $newCredits = array();
+        // define text color
+        $grey = imagecolorallocate($png_image, 125, 125, 125);
+        $black = imagecolorallocate($png_image, 0, 0, 0);
 
-        $creditsArray = explode(" ", $credits);
-        
-        $i = 1;
+        $dash = '—';
 
-        while ( True ) {
+        $credits = $title . ', ' . $author;
+        $creditFont_size = 18;
 
-            // cut the metadata in two lines
-            $tmp0 = implode(" ", array_slice($creditsArray, 0, count($creditsArray)-$i));
-            $tmp1 = implode(" ", array_slice($creditsArray, 0-$i));
+        // if the metadata are longer than 45 characters, replace a space by a newline from the end,
+        // just as long the paragraph is getting smaller. stop when the box gets wider again.
+        list($metawidth, $metaheight, $metaleft, $metatop) = measureSizeOfTextbox($creditFont_size, $creditFont, $dash . $credits);
 
-            // once the second line is (almost) longer than the first line, stop
-            if ( strlen($tmp1)+5 > strlen($tmp0) ) {
-                break;
-            } else { 
-                // if the second line is still shorter than the first, save it to a new string, but continue to look at a new fit.
-                $newCredits[0] = $tmp0;
-                $newCredits[1] = $tmp1;
+        if ($metawidth > 500) {
+
+            $newCredits = array();
+
+            $creditsArray = explode(' ', $credits);
+
+            $i = 1;
+
+            while (True) {
+
+                // cut the metadata in two lines
+                $tmp0 = implode(' ', array_slice($creditsArray, 0, count($creditsArray) - $i));
+                $tmp1 = implode(' ', array_slice($creditsArray, 0 - $i));
+
+                // once the second line is (almost) longer than the first line, stop
+                if (strlen($tmp1) + 5 > strlen($tmp0)) {
+                    break;
+                } else {
+                    // if the second line is still shorter than the first, save it to a new string, but continue to look at a new fit.
+                    $newCredits[0] = $tmp0;
+                    $newCredits[1] = $tmp1;
+                }
+
+                $i++;
+
             }
 
-            $i++;
+            list($textWidth1, $textheight1) = measureSizeOfTextbox($creditFont_size, $creditFont, $dash . $newCredits[0]);
+            list($textWidth2, $textheight2) = measureSizeOfTextbox($creditFont_size, $creditFont, $newCredits[1]);
+
+            $metadataX1 = $width - ($textWidth1 + $margin);
+            $metadataX2 = $width - ($textWidth2 + $margin);
+            $metadataY = $height - $margin;
+
+            imagettftext($png_image, $creditFont_size, 0, $metadataX1, $metadataY - (int) ($textheight1 * 1.1), $black, $creditFont, $dash . $newCredits[0]);
+            imagettftext($png_image, $creditFont_size, 0, $metadataX2, $metadataY, $black, $creditFont, $newCredits[1]);
+
+        } else {
+
+            // position of single line metadata
+            $metadataX = ($width - $metaleft) - $margin;
+            $metadataY = $height - $margin;
+
+            imagettftext($png_image, $creditFont_size, 0, $metadataX, $metadataY, $black, $creditFont, $dash . $credits);
 
         }
 
-        list($textWidth1, $textheight1) = measureSizeOfTextbox($creditFont_size, $creditFont, $dash . $newCredits[0]);
-        list($textWidth2, $textheight2) = measureSizeOfTextbox($creditFont_size, $creditFont, $newCredits[1]);
+        // Save the image with metadata
+        imagepng($png_image, 'images/metadata/quote_' . $time . '_' . $imagenumber . '_credits.png');
 
-        $metadataX1 = $width-($textWidth1+$margin);
-        $metadataX2 = $width-($textWidth2+$margin);
-        $metadataY = $height-$margin;
+        // Free up memory
+        imagedestroy($png_image);
 
-        imagettftext($png_image, $creditFont_size, 0, $metadataX1, $metadataY-($textheight1*1.1), $black, $creditFont, $dash . $newCredits[0]);
-        imagettftext($png_image, $creditFont_size, 0, $metadataX2, $metadataY, $black, $creditFont, $newCredits[1]);
-        
-    } else {
+        // convert the image we made to greyscale
+        $im = new Imagick();
+        $im->readImage('images/quote_' . $time . '_' . $imagenumber . '.png');
+        $im->setImageType(Imagick::IMGTYPE_GRAYSCALE);
+        unlink('images/quote_' . $time . '_' . $imagenumber . '.png');
+        $im->writeImage('images/quote_' . $time . '_' . $imagenumber . '.png');
 
-        // position of single line metadata
-        $metadataX = ($width-$metaleft)-$margin;
-        $metadataY = $height-$margin;
-
-        imagettftext($png_image, $creditFont_size, 0, $metadataX, $metadataY, $black, $creditFont, $dash . $credits);
+        // convert the image we made to greyscale
+        $im = new Imagick();
+        $im->readImage('images/metadata/quote_' . $time . '_' . $imagenumber . '_credits.png');
+        $im->setImageType(Imagick::IMGTYPE_GRAYSCALE);
+        unlink('images/metadata/quote_' . $time . '_' . $imagenumber . '_credits.png');
+        $im->writeImage('images/metadata/quote_' . $time . '_' . $imagenumber . '_credits.png');
 
     }
-
-    // Save the image with metadata
-    imagepng($png_image, 'images/metadata/quote_'.$time.'_'.$imagenumber.'_credits.png');
-
-    // Free up memory
-    imagedestroy($png_image);
-
-    // convert the image we made to greyscale
-    $im = new Imagick();
-    $im->readImage('images/quote_'.$time.'_'.$imagenumber.'.png');
-    $im->setImageType(Imagick::IMGTYPE_GRAYSCALE);
-    unlink('images/quote_'.$time.'_'.$imagenumber.'.png');
-    $im->writeImage('images/quote_'.$time.'_'.$imagenumber.'.png');
-
-    // convert the image we made to greyscale 
-    $im = new Imagick();
-    $im->readImage('images/metadata/quote_'.$time.'_'.$imagenumber.'_credits.png');
-    $im->setImageType(Imagick::IMGTYPE_GRAYSCALE);
-    unlink('images/metadata/quote_'.$time.'_'.$imagenumber.'_credits.png');
-    $im->writeImage('images/metadata/quote_'.$time.'_'.$imagenumber.'_credits.png');
-
-    } else {
-        //printf("Good work, this one's already here! - ".$checkpath."<br />");
-    }
-
-    
 
 }
 
 
-function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $timestring_wordcount, $margin) {
+function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $timestring_wordcount, $margin)
+{
 
     global $font_path_bold;
     global $font_path;
 
     // create image
     $png_image = imagecreate($width, $height)
-        or die("Cannot Initialize new GD image stream");
+    or die('Cannot Initialize new GD image stream');
     $background_color = imagecolorallocate($png_image, 255, 255, 255);
 
     // define text color
@@ -212,14 +209,14 @@ function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $
     $lineWidth = 0;
 
     // variable to hold the x and y position of words
-    $position = array($margin,$margin+$font_size);
+    $position = array($margin, $margin + $font_size);
 
-    // echo "try " . $font_size . ", ";
+    // echo 'try ' . $font_size . ', ';
 
-    foreach($quote_array as $key => $word) {
+    foreach ($quote_array as $key => $word) {
 
         # change the look of the text if it is part of the time string
-        if ( in_array($key, range($timestringStarts, $timestringStarts+$timestring_wordcount)) ) {
+        if (in_array($key, range($timestringStarts, $timestringStarts + $timestring_wordcount))) {
             $font = $font_path_bold;
             $textcolor = $black;
         } else {
@@ -228,35 +225,35 @@ function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $
         }
 
         // measure the word's width
-        list($textwidth, $textheight) = measureSizeOfTextbox($font_size, $font, $word . " ");
+        list($textwidth, $textheight) = measureSizeOfTextbox($font_size, $font, $word . ' ');
 
         //// write every word to image, and record its position for the next word ////
 
         // if one word exceeds the width of the image (this sometimes happens when the quote is very short),
         // then stop trying to make the font size even bigger.
-        if ( $textwidth > ($width - $margin) ) {
+        if ($textwidth > ($width - $margin)) {
             return False;
         }
 
-        // if the line plus the extra word is too wide for the specified width, then write the word one the next line. 
-        if ( ($position[0] + $textwidth) >= ($width - $margin) ) {
-            
+        // if the line plus the extra word is too wide for the specified width, then write the word one the next line.
+        if (($position[0] + $textwidth) >= ($width - $margin)) {
+
             # 'carriage return':
-            # reset x to the beginning of the line and push y down a line 
+            # reset x to the beginning of the line and push y down a line
             $position[0] = $margin;
-            $position[1] = $position[1] + round($font_size*1.618); // 'golden ratio' line height
+            $position[1] = $position[1] + (int) ($font_size * 1.618); // 'golden ratio' line height
 
             # write the word to the image
             imagettftext($png_image, $font_size, 0, $position[0], $position[1], $textcolor, $font, $word);
-           
-        // if the line isn't too long, just add it.
+
+            // if the line isn't too long, just add it.
         } else {
 
             # write the word to the image
             imagettftext($png_image, $font_size, 0, $position[0], $position[1], $textcolor, $font, $word);
 
         }
-        
+
         # add the word's width
         $position[0] += $textwidth;
 
@@ -264,9 +261,9 @@ function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $
 
     // if the height of the whole text is smaller than the height of the image, then call this same function again
     $paragraphHeight = $position[1];
-    if ( $paragraphHeight < $height-100 ) { // leaving room for the credits below
-        $result = fitText($quote_array, $width, $height, $font_size+1, $timestringStarts, $timestring_wordcount, $margin);
-        if ( $result !== False ) {
+    if ($paragraphHeight < $height - 100) { // leaving room for the credits below
+        $result = fitText($quote_array, $width, $height, $font_size + 1, $timestringStarts, $timestring_wordcount, $margin);
+        if ($result !== False) {
             list($png_image, $paragraphHeight, $font_size, $timeLocation) = $result;
         };
     } else {
@@ -279,23 +276,21 @@ function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $
 
 }
 
-function measureSizeOfTextbox($font_size, $font_path, $text) {
+function measureSizeOfTextbox($font_size, $font_path, $text)
+{
 
     $box = imagettfbbox($font_size, 0, $font_path, $text);
 
-    $min_x = min( array($box[0], $box[2], $box[4], $box[6]) );
-    $max_x = max( array($box[0], $box[2], $box[4], $box[6]) );
-    $min_y = min( array($box[1], $box[3], $box[5], $box[7]) );
-    $max_y = max( array($box[1], $box[3], $box[5], $box[7]) );
+    $min_x = min(array($box[0], $box[2], $box[4], $box[6]));
+    $max_x = max(array($box[0], $box[2], $box[4], $box[6]));
+    $min_y = min(array($box[1], $box[3], $box[5], $box[7]));
+    $max_y = max(array($box[1], $box[3], $box[5], $box[7]));
 
-    $width  = ( $max_x - $min_x );
-    $height = ( $max_y - $min_y );
-    $left   = abs( $min_x ) + $width;
-    $top    = abs( $min_y ) + $height;
+    $width = ($max_x - $min_x);
+    $height = ($max_y - $min_y);
+    $left = abs($min_x) + $width;
+    $top = abs($min_y) + $height;
 
     return array($width, $height, $left, $top);
 
 }
-
-
-?>

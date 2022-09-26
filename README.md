@@ -7,7 +7,7 @@ I wanted to make some changes to the scripts, and to the provided CSV files.
 
 # Prerequisites
 To get the PHP script working on my Linux box, I need to install the following pckages:
-* php7.0-cli
+* php7.0-cli (or any version up to and including PHP 8.1)
 * php-gd
 * php-imagick
 * imagemagick
