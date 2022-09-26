@@ -8,7 +8,7 @@ on:
 
 jobs:
   generate-images:
-    runs-on: srcoder/development-php:php81-fpm
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
