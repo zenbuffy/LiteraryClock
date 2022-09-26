@@ -1,0 +1,23 @@
+name: generate-images
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-images:
+    runs-on: srcoder/development-php:php81-fpm
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.head_ref }}
+
+    - name: Generate images
+      run: rm -rf images && php quote_to_images.php
+
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Update images dir
