@@ -4,7 +4,8 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - master
+  workflow_dispatch:
 
 jobs:
   generate-images:
@@ -16,8 +17,14 @@ jobs:
         ref: ${{ github.head_ref }}
 
     - name: Generate images
-      run: rm -rf images && php quote_to_images.php
+      run: |
+        curl https://kumisystems.dl.sourceforge.net/project/linuxlibertine/linuxlibertine/5.3.0/LinLibertineTTF_5.3.0_2012_07_02.tgz --output libertine.tgz && \
+        tar xvf libertine.tgz && \
+        rm -rf images && \
+        php quote_to_image.php
 
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
+        file_pattern: 'images/*'
+        skip_dirty_check: true
         commit_message: Update images dir
