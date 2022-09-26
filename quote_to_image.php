@@ -20,7 +20,7 @@ $font_path = 'LinLibertine_RZah.ttf';
 $font_path_bold = 'LinLibertine_RBah.ttf';
 $creditFont = 'LinLibertine_RZIah.ttf';
 
-// get the quotes (including title and author) from a CSV file, 
+// get the quotes (including title and author) from a CSV file,
 // and create unique images for them, one without and one with title and author
 $row = 1;
 if (($handle = fopen('litclock_annotated_improved.csv', 'r')) !== FALSE) {
@@ -72,7 +72,7 @@ function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author)
     $font_size = 18;
 
 
-    // serial number for when there is more than one quote for a certain minute 
+    // serial number for when there is more than one quote for a certain minute
     global $imagenumber;
     global $previoustime;
     if ($time == $previoustime) {
@@ -152,7 +152,7 @@ function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author)
             $metadataX2 = $width - ($textWidth2 + $margin);
             $metadataY = $height - $margin;
 
-            imagettftext($png_image, $creditFont_size, 0, $metadataX1, $metadataY - ($textheight1 * 1.1), $black, $creditFont, $dash . $newCredits[0]);
+            imagettftext($png_image, $creditFont_size, 0, $metadataX1, $metadataY - (int) ($textheight1 * 1.1), $black, $creditFont, $dash . $newCredits[0]);
             imagettftext($png_image, $creditFont_size, 0, $metadataX2, $metadataY, $black, $creditFont, $newCredits[1]);
 
         } else {
@@ -178,7 +178,7 @@ function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author)
         unlink('images/quote_' . $time . '_' . $imagenumber . '.png');
         $im->writeImage('images/quote_' . $time . '_' . $imagenumber . '.png');
 
-        // convert the image we made to greyscale 
+        // convert the image we made to greyscale
         $im = new Imagick();
         $im->readImage('images/metadata/quote_' . $time . '_' . $imagenumber . '_credits.png');
         $im->setImageType(Imagick::IMGTYPE_GRAYSCALE);
@@ -235,13 +235,13 @@ function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $
             return False;
         }
 
-        // if the line plus the extra word is too wide for the specified width, then write the word one the next line. 
+        // if the line plus the extra word is too wide for the specified width, then write the word one the next line.
         if (($position[0] + $textwidth) >= ($width - $margin)) {
 
             # 'carriage return':
-            # reset x to the beginning of the line and push y down a line 
+            # reset x to the beginning of the line and push y down a line
             $position[0] = $margin;
-            $position[1] = $position[1] + round($font_size * 1.618); // 'golden ratio' line height
+            $position[1] = $position[1] + (int) ($font_size * 1.618); // 'golden ratio' line height
 
             # write the word to the image
             imagettftext($png_image, $font_size, 0, $position[0], $position[1], $textcolor, $font, $word);
@@ -294,4 +294,3 @@ function measureSizeOfTextbox($font_size, $font_path, $text)
     return array($width, $height, $left, $top);
 
 }
-
