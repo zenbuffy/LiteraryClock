@@ -30,3 +30,6 @@ I've begun filling in some extra times with books I enjoy. In some cases, I've s
 As of right now, the times are complete (afaik). However, there is still a Google Form to gather any times people come across while reading: https://docs.google.com/forms/d/1TpjlPc1VI9-tnI7yPSvtHE6FefLJ4IbbtVKwfy7C9ds/edit
 
 Feel free to add one if you come across a time while reading, or to fork this repo to make updates to the source CSV file!
+
+# Thanks
+Immeasurable thanks to all who have contributed to this repo, fixing typos and code issues. Special thanks to @peterjaap for automating the image generation using git actions!
