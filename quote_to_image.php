@@ -16,9 +16,9 @@ $previoustime = 0;
 
 // pad naar font file
 putenv('GDFONTPATH=' . realpath('.'));
-$font_path = 'LinLibertine_RZah.ttf';
-$font_path_bold = 'LinLibertine_RBah.ttf';
-$creditFont = 'LinLibertine_RZIah.ttf';
+$font_path = 'LinLibertine_RZ.otf';
+$font_path_bold = 'LinLibertine_RB.otf';
+$creditFont = 'LinLibertine_RZI.otf';
 
 // get the quotes (including title and author) from a CSV file,
 // and create unique images for them, one without and one with title and author

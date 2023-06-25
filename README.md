@@ -6,7 +6,7 @@ Jaap Meijers shared instructions to create a literary clock using an old Kindle 
 I wanted to make some changes to the scripts, and to the provided CSV files.
 
 # Prerequisites
-To get the PHP script working on my Linux box, I need to install the following pckages:
+To get the PHP script working on my Linux box, I need to install the following php packages:
 * php7.0-cli (or any version up to and including PHP 8.1)
 * php-gd
 * php-imagick
