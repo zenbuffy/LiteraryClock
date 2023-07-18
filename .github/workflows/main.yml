@@ -28,3 +28,4 @@ jobs:
         file_pattern: 'images/*'
         skip_dirty_check: true
         commit_message: Update images dir
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
