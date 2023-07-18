@@ -18,6 +18,7 @@ $previoustime = 0;
 putenv('GDFONTPATH=' . realpath('.'));
 
 InitializeFonts();
+setDevice($argv);
 
 // get the quotes (including title and author) from a CSV file,
 // and create unique images for them, one without and one with title and author
@@ -40,6 +41,38 @@ if (($handle = fopen('litclock_annotated_improved.csv', 'r')) !== FALSE) {
 
     }
     fclose($handle);
+}
+
+function setDevice($argv){
+    global $deviceWidth;
+    global $deviceHeight;
+
+    //set default as Kindle size
+    $deviceWidth = 600;
+    $deviceHeight = 800;
+
+    if(!empty($argv[1])){
+        
+
+        if(strtoupper($argv[1])=="PAPERWHITE"){
+            $deviceWidth = 758;
+            $deviceHeight = 1024;
+        }
+        elseif(strtoupper($argv[1])=="OASIS"){
+            $deviceWidth = 1264;
+            $deviceHeight = 1680;
+        }
+        elseif(strtoupper($argv[1])=="CUSTOM"){
+            $deviceWidth = $argv[2];
+            $deviceHeight = $argv[3];
+
+        }
+        else{
+            //if we don't have a value for the device or a custom setting, default to kindle size
+            $deviceWidth = 600;
+            $deviceHeight = 800;
+        }
+    }
 }
 
 function InitializeFonts()
@@ -100,9 +133,11 @@ function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author)
     global $font_path;
     global $font_path_bold;
     global $creditFont;
+    global $deviceWidth;
+    global $deviceHeight;
     //image dimensions
-    $width = 600;
-    $height = 800;
+    $width = $deviceWidth;
+    $height = $deviceHeight;
 
     //text margin
     $margin = 26;
