@@ -35,7 +35,7 @@ if (($handle = fopen('litclock_annotated_improved.csv', 'r')) !== FALSE) {
         //echo $time.'|'.$quote.' - '.$author.' '.$title;
 
 
-        // if ($row < 10)
+         
         TurnQuoteIntoImage($time, $quote, $timestring, $title, $author);
 
     }
@@ -48,9 +48,9 @@ function InitializeFonts()
     global $font_path_bold;
     global $creditFont;
 
-    $tff_font_path = 'LinLibertine_RZah.ttf';
-    $tff_font_path_bold = 'LinLibertine_RBah.ttf';
-    $tff_creditFont = 'LinLibertine_RZIah.ttf';
+    $tff_font_path = 'LinLibertine_RZ.ttf';
+    $tff_font_path_bold = 'LinLibertine_RB.ttf';
+    $tff_creditFont = 'LinLibertine_RZI.ttf';
 
     // Depending on how fonts are installed, this may be what you want instead:
     $otf_font_path = 'LinLibertine_RZ.otf';
