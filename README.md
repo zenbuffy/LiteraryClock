@@ -25,14 +25,16 @@ It just does this check in the images directory, not the metadata directory. If 
 The image generator now supports custom and pre-configured alternative image sizes. The default size will remain the old Kindle size (600 x 800) but you now have the option to run the script with command line arguments to choose from preconfigured sizes or set your own. 
 
 To use this, simply add your command line argument after the php file when you run it, e.g.
-php quote_to_image.php paperwhite
+
+`php quote_to_image.php paperwhite`
 
 The following preconfigured sizes exist:
 * paperwhite
 * oasis
 
 You can also set a custom image size using the "custom" argument and providing the width and height immediately after, e.g.
-php quote_to_image.php custom 750 1024
+
+`php quote_to_image.php custom 750 1024`
 
 # CSV file
 I've begun filling in some extra times with books I enjoy. In some cases, I've simply added to times where there already were some entries, to include books I like. I have also added some entries where times did not exist already.
