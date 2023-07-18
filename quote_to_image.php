@@ -17,14 +17,7 @@ $previoustime = 0;
 // pad naar font file
 putenv('GDFONTPATH=' . realpath('.'));
 
-$font_path = 'LinLibertine_RZah.ttf';
-$font_path_bold = 'LinLibertine_RBah.ttf';
-$creditFont = 'LinLibertine_RZIah.ttf';
-
-// Depending on how fonts are installed, this may be what you want instead:
-//$font_path = 'LinLibertine_RZ.otf';
-//$font_path_bold = 'LinLibertine_RB.otf';
-//$creditFont = 'LinLibertine_RZI.otf';
+InitializeFonts();
 
 // get the quotes (including title and author) from a CSV file,
 // and create unique images for them, one without and one with title and author
@@ -49,6 +42,58 @@ if (($handle = fopen('litclock_annotated_improved.csv', 'r')) !== FALSE) {
     fclose($handle);
 }
 
+function InitializeFonts()
+{
+    global $font_path;
+    global $font_path_bold;
+    global $creditFont;
+
+    $tff_font_path = 'LinLibertine_RZah.ttf';
+    $tff_font_path_bold = 'LinLibertine_RBah.ttf';
+    $tff_creditFont = 'LinLibertine_RZIah.ttf';
+
+    // Depending on how fonts are installed, this may be what you want instead:
+    $otf_font_path = 'LinLibertine_RZ.otf';
+    $otf_font_path_bold = 'LinLibertine_RB.otf';
+    $otf_creditFont = 'LinLibertine_RZI.otf';
+
+    $font_error = false;
+
+    if (file_exists($tff_font_path)) {
+        $font_path = $tff_font_path;
+    } elseif (file_exists($otf_font_path)) {
+        $font_path = $otf_font_path;
+    } else {
+        print "ERROR: Unable to find font file: " . $tff_font_path . " or " . $otf_font_path;
+        $font_error = true;
+    }
+
+    if (file_exists($tff_font_path_bold)) {
+        $font_path_bold = $tff_font_path_bold;
+    } elseif (file_exists($otf_font_path_bold)) {
+        $font_path_bold = $otf_font_path_bold;
+    } else {
+        print "ERROR: Unable to find font file: " . $tff_font_path_bold . " or " . $otf_font_path_bold;
+        $font_error = true;
+    }
+
+
+    if (file_exists($tff_creditFont)) {
+        $creditFont = $tff_creditFont;
+    } elseif (file_exists($otf_creditFont)) {
+        $creditFont = $otf_creditFont;
+    } else {
+        print "ERROR: Unable to find font file: " . $tff_creditFont . " or " . $otf_creditFont . PHP_EOL;
+        $font_error = true;
+    }
+
+    if ($font_error) {
+        print "ERROR loading fonts!" . PHP_EOL;
+        print "Please download and install the fonts from here: https://sourceforge.net/projects/linuxlibertine/ into the current directory." . PHP_EOL;
+        exit;
+    }
+
+}
 
 function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author)
 {
