@@ -46,4 +46,8 @@ As of right now, the times are complete (afaik). However, there is still a Googl
 Feel free to add one if you come across a time while reading, or to fork this repo to make updates to the source CSV file!
 
 # Thanks
-Immeasurable thanks to all who have contributed to this repo, fixing typos and code issues. Special thanks to @peterjaap for automating the image generation using git actions!
+Immeasurable thanks to all who have contributed to this repo, fixing typos and code issues. Special thanks to @peterjaap for automating the image generation using git actions! Thanks also to the people submitting times via the Google Form:
+* Joel Becker
+* Jaap Meijers
+* Darryl Lee
+* and all the anonymous submitters!
