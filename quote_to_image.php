@@ -33,10 +33,7 @@ if (($handle = fopen('litclock_annotated_improved.csv', 'r')) !== FALSE) {
         $quote = trim(preg_replace('/\s+/', ' ', $quote));
         $title = trim($data[3]);
         $author = trim($data[4]);
-        //echo $time.'|'.$quote.' - '.$author.' '.$title;
 
-
-         
         TurnQuoteIntoImage($time, $quote, $timestring, $title, $author);
 
     }
