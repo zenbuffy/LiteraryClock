@@ -74,8 +74,9 @@ def yaml_append(time_obj, time_human, source, author, quote):
     with open("litclock.yaml", "w") as f:
         f.write(yaml.dump(content))
 
+
 class CustomDialect(csv.excel):
-    delimiter = '|'
+    delimiter = "|"
 
 
 def csv_append(time_obj, time_human, source, author, quote):
@@ -106,13 +107,15 @@ def csv_append(time_obj, time_human, source, author, quote):
         for i, line in enumerate(r):
             if time.strptime(line[0], "%H:%M") > time_obj and not inserted:
                 print(f"Inserting before {line}")
-                content.append([
-                    time.strftime("%H:%M", time_obj),
-                    time_human,
-                    quote,
-                    source,
-                    author,
-                ])
+                content.append(
+                    [
+                        time.strftime("%H:%M", time_obj),
+                        time_human,
+                        quote,
+                        source,
+                        author,
+                    ]
+                )
                 inserted = True
             else:
                 content.append(line)
