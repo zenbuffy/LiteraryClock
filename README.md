@@ -21,6 +21,15 @@ I've modified the quote_to_image file so that it first checks to see if an image
 
 It just does this check in the images directory, not the metadata directory. If you want to force the regeneration of a specific image for any reason (e.g. you fixed a typo), just delete that image from the "images" directory, no need to touch the metadata directory, and it'll regenerate both.
 
+# Adding a quote
+
+Run `./insert_quote.py` to add a quote to the CSV/JSON/YAML files.
+
+Sample command:
+```
+$ ./insert_quote.py --time '01:00' --time_human '1 am' --source 'The Best Example Book' --author 'Ian M Banks' "This is a test. Isn't it fun! \"Go forth and have fun\"" --csv
+```
+
 # Custom Image Sizes
 The image generator now supports custom and pre-configured alternative image sizes. The default size will remain the old Kindle size (600 x 800) but you now have the option to run the script with command line arguments to choose from preconfigured sizes or set your own. 
 
