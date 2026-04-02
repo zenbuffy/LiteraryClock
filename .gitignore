@@ -2,3 +2,6 @@
 *.otf
 litclock_annotated_improved.csv.bak
 quote_to_image.php.bak
+vendor/
+docs/superpowers/
+__pycache__/

@@ -3,37 +3,39 @@
 // this script turns quotes from books into images for use in a Kindle clock.
 // Jaap Meijers, 2018
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('max_execution_time', 3000);
+require __DIR__ . '/vendor/autoload.php';
 
-if (!is_dir('images/metadata') && !mkdir('images/metadata', 0777, true)) {
-    throw new \RuntimeException(sprintf('Directory "%s" was not created', 'images/metadata'));
-}
+use Symfony\Component\Yaml\Yaml;
 
-$imagenumber = 0;
-$previoustime = 0;
+if (realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'] ?? '')) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('max_execution_time', 3000);
 
-// pad naar font file
-putenv('GDFONTPATH=' . realpath('.'));
+    if (!is_dir('images/metadata') && !mkdir('images/metadata', 0777, true)) {
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', 'images/metadata'));
+    }
 
-InitializeFonts();
-setDevice($argv);
+    $imagenumber = 0;
+    $previoustime = 0;
 
-// get the quotes (including title and author) from a CSV file,
-// and create unique images for them, one without and one with title and author
-if (($handle = fopen('litclock_annotated_improved.csv', 'r')) !== FALSE) {
-    while (($data = fgetcsv($handle, 0, '|')) !== FALSE) {
-        $time = $data[0];
-        $timestring = trim($data[1]);
-        $quote = $data[2];
-        $quote = trim(preg_replace('/\s+/', ' ', $quote));
-        $title = trim($data[3]);
-        $author = trim($data[4]);
+    putenv('GDFONTPATH=' . realpath('.'));
+
+    InitializeFonts();
+    setDevice($argv);
+
+    // get the quotes (including title and author) from the YAML file,
+    // and create unique images for them, one without and one with title and author
+    $entries = Yaml::parseFile('litclock.yaml');
+    foreach ($entries as $entry) {
+        $time       = $entry['time'];
+        $timestring = trim($entry['time_name']);
+        $quote      = trim(preg_replace('/\s+/', ' ', $entry['quote']));
+        $title      = trim($entry['source']);
+        $author     = trim($entry['author']);
 
         TurnQuoteIntoImage($time, $quote, $timestring, $title, $author);
     }
-    fclose($handle);
 }
 
 function setDevice($argv) {
