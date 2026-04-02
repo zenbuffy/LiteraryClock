@@ -22,12 +22,22 @@ if (realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'] ?? '')) {
     putenv('GDFONTPATH=' . realpath('.'));
 
     InitializeFonts();
-    setDevice($argv);
+
+    // Check for --all flag (include NSFW quotes); strip it before device parsing
+    $includeNsfw = in_array('--all', $argv);
+    $filteredArgv = array_values(array_filter($argv, fn($a) => $a !== '--all'));
+    setDevice($filteredArgv);
 
     // get the quotes (including title and author) from the YAML file,
     // and create unique images for them, one without and one with title and author
     $entries = Yaml::parseFile('litclock.yaml');
     foreach ($entries as $entry) {
+        // Skip NSFW quotes unless --all flag is set.
+        // Entries without an 'sfw' field (original entries) are treated as SFW.
+        if (!$includeNsfw && isset($entry['sfw']) && $entry['sfw'] === 'no') {
+            continue;
+        }
+
         $time       = $entry['time'];
         $timestring = trim($entry['time_name']);
         $quote      = trim(preg_replace('/\s+/', ' ', $entry['quote']));

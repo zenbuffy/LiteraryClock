@@ -29,6 +29,11 @@ $ ./insert_quote.py --time '01:00' --time_human '1 am' --source 'The Best Exampl
 $ ./yaml_to_formats.py
 ```
 
+Quotes are marked as safe for work (SFW) by default. Use `--nsfw` to flag a quote as not safe for work:
+```
+$ ./insert_quote.py --nsfw --time '23:00' --time_human '11 pm' --source 'Some Book' --author 'Some Author' "An adult quote."
+```
+
 # Custom Image Sizes
 The image generator now supports custom and pre-configured alternative image sizes. The default size will remain the old Kindle size (600 x 800) but you now have the option to run the script with command line arguments to choose from preconfigured sizes or set your own. 
 
@@ -56,6 +61,18 @@ The following preconfigured sizes exist:
 You can also set a custom image size using the "custom" argument and providing the width and height immediately after, e.g.
 
 `php quote_to_image.php custom 750 1024`
+
+# Content Filtering
+
+By default, the image generator skips quotes marked as not safe for work (NSFW). To generate images for all quotes including NSFW ones, pass the `--all` flag:
+
+```
+php quote_to_image.php --all
+php quote_to_image.php paperwhite --all
+php quote_to_image.php custom 750 1024 --all
+```
+
+Note: quotes imported from the original data set predate this classification and are treated as SFW. Only quotes sourced from the [literature-clock](https://github.com/flisoldf/literature-clock) project carry explicit `sfw: yes/no` metadata.
 
 # Kindle Scripts
 
@@ -100,3 +117,5 @@ Immeasurable thanks to all who have contributed to this repo, fixing typos and c
 * Jaap Meijers
 * Darryl Lee
 * and all the anonymous submitters!
+
+A significant portion of the quote data was merged from the [literature-clock](https://github.com/JohannesNE/literature-clock) project by [Johannes Evoldsen](https://github.com/JohannesNE), itself based on the original work by Jaap Meijers. Many thanks to Johannes and all contributors to that project.

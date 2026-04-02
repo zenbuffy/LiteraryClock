@@ -4,14 +4,14 @@ import time
 import yaml
 
 
-def main(time_arg, time_human, source, author, quote):
+def main(time_arg, time_human, source, author, quote, sfw):
     time_obj = time.strptime(time_arg, "%H:%M")
-    yaml_insert(time_obj, time_human, source, author, quote)
+    yaml_insert(time_obj, time_human, source, author, quote, sfw=sfw)
 
 
-def yaml_insert(time_obj, time_human, source, author, quote, filepath="litclock.yaml"):
+def yaml_insert(time_obj, time_human, source, author, quote, sfw="yes", filepath="litclock.yaml"):
     """Insert a quote into a litclock YAML file at the correct chronological position."""
-    with open(filepath) as f:
+    with open(filepath, encoding='utf-8') as f:
         content = yaml.safe_load(f)
 
     entry = {
@@ -20,6 +20,7 @@ def yaml_insert(time_obj, time_human, source, author, quote, filepath="litclock.
         "source": source,
         "author": author,
         "quote": quote,
+        "sfw": sfw,
     }
 
     for i, line in enumerate(content):
@@ -31,7 +32,7 @@ def yaml_insert(time_obj, time_human, source, author, quote, filepath="litclock.
         print("Inserting at end")
         content.append(entry)
 
-    with open(filepath, "w") as f:
+    with open(filepath, "w", encoding='utf-8') as f:
         f.write(yaml.dump(content, allow_unicode=True, sort_keys=True))
 
 
@@ -49,6 +50,11 @@ if __name__ == "__main__":
     parser.add_argument("--source", required=True, help="Title of the literary work")
     parser.add_argument("--author", required=True, help="Author of the literary work")
     parser.add_argument("quote", help="The quote text")
+    parser.add_argument(
+        "--nsfw",
+        action="store_true",
+        help="Mark this quote as not safe for work (default: SFW)",
+    )
     args = parser.parse_args()
     main(
         time_arg=args.time,
@@ -56,4 +62,5 @@ if __name__ == "__main__":
         source=args.source,
         author=args.author,
         quote=args.quote,
+        sfw="no" if args.nsfw else "yes",
     )
