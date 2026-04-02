@@ -57,6 +57,34 @@ You can also set a custom image size using the "custom" argument and providing t
 
 `php quote_to_image.php custom 750 1024`
 
+# Kindle Scripts
+
+The scripts in `KindleScripts/` run on the Kindle itself and are deployed to `/mnt/us/timelit/` on the device.
+
+## timelit.sh
+
+This is the main display script, called every minute by cron. It has been updated with the following features:
+
+**Timezone** — Set to `Europe/Dublin`. Change the `TZ=Europe/Dublin` value on the `MinuteOTheDay` line (and the sleep-hour check above it) to match your local timezone, using a tz database name (e.g. `Europe/London`, `America/New_York`).
+
+**Sleep hours** — The script exits without updating the display between 1am and 6am to save power. The e-ink screen holds the last image without drawing any power. Adjust the hours in the `if [ "$hour" -ge 1 ] && [ "$hour" -lt 6 ]` check if needed.
+
+**Battery warning** — If the Kindle's battery drops below 20%, the current charge percentage is overlaid on the displayed image. This threshold can be adjusted by changing `[ "$battery" -lt 20 ]`.
+
+## synctime.sh
+
+This script briefly enables WiFi to allow the Kindle's NTP client to sync the system clock, then disables WiFi again. It is intended to run once a day just before the clock wakes from its sleep hours.
+
+**Deployment:** Copy `synctime.sh` to `/mnt/us/timelit/synctime.sh` on the Kindle.
+
+**Cron entry:** Add the following to the Kindle's crontab (at `/etc/crontab/root`, after remounting the filesystem read-write with `mntroot rw`):
+
+```
+55 5 * * * sh /mnt/us/timelit/synctime.sh
+```
+
+This runs the sync at 05:55, giving it time to complete before the clock resumes at 06:00.
+
 # CSV file
 I've begun filling in some extra times with books I enjoy. In some cases, I've simply added to times where there already were some entries, to include books I like. I have also added some entries where times did not exist already.
 
