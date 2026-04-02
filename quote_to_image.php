@@ -50,11 +50,49 @@ function setDevice($argv) {
         $device = strtoupper($argv[1]);
 
         if ($device == "PAPERWHITE") {
+            // Kindle Paperwhite 1–3 (older)
             $deviceWidth = 758;
             $deviceHeight = 1024;
+        } elseif ($device == "PAPERWHITE5") {
+            // Kindle Paperwhite 11th gen (2021), 6.8"
+            $deviceWidth = 1236;
+            $deviceHeight = 1648;
+        } elseif ($device == "KINDLE" || $device == "BASIC") {
+            // Kindle 11th gen (2022), 6"
+            $deviceWidth = 1072;
+            $deviceHeight = 1448;
         } elseif ($device == "OASIS") {
+            // Kindle Oasis (10th gen), 7"
             $deviceWidth = 1264;
             $deviceHeight = 1680;
+        } elseif ($device == "SCRIBE") {
+            // Kindle Scribe, 10.2"
+            $deviceWidth = 1860;
+            $deviceHeight = 2480;
+        } elseif ($device == "CLARA") {
+            // Kobo Clara 2E / Clara BW, 6"
+            $deviceWidth = 1072;
+            $deviceHeight = 1448;
+        } elseif ($device == "LIBRA") {
+            // Kobo Libra 2 / Libra Colour, 7"
+            $deviceWidth = 1264;
+            $deviceHeight = 1680;
+        } elseif ($device == "SAGE") {
+            // Kobo Sage, 8"
+            $deviceWidth = 1440;
+            $deviceHeight = 1920;
+        } elseif ($device == "ELIPSA") {
+            // Kobo Elipsa 2E, 10.3"
+            $deviceWidth = 1404;
+            $deviceHeight = 1872;
+        } elseif ($device == "REMARKABLE") {
+            // reMarkable 2, 10.3"
+            $deviceWidth = 1404;
+            $deviceHeight = 1872;
+        } elseif ($device == "REMARKABLEPRO") {
+            // reMarkable Paper Pro, 11.8"
+            $deviceWidth = 1620;
+            $deviceHeight = 2160;
         } elseif ($device == "CUSTOM") {
             $deviceWidth = $argv[2];
             $deviceHeight = $argv[3];
