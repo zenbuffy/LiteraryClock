@@ -17,7 +17,7 @@ jobs:
       run: pip install pyyaml
 
     - name: Run Python tests
-      run: python -m unittest test_insert_quote -v
+      run: python -m unittest test_insert_quote test_yaml_to_formats -v
 
   test-php:
     runs-on: ubuntu-latest
