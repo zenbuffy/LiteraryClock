@@ -14,18 +14,23 @@ FIXTURE = [
 ]
 
 
-def make_temp_yaml(content):
-    d = tempfile.mkdtemp()
-    path = os.path.join(d, "test.yaml")
-    with open(path, "w", encoding="utf-8") as f:
-        yaml.dump(content, f, allow_unicode=True)
-    return path
-
-
 class TestConvertJson(unittest.TestCase):
 
+    def setUp(self):
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.tmpdir_path = self.tmpdir.name
+
+    def tearDown(self):
+        self.tmpdir.cleanup()
+
+    def _make_temp_yaml(self, content):
+        path = os.path.join(self.tmpdir_path, "test.yaml")
+        with open(path, "w", encoding="utf-8") as f:
+            yaml.dump(content, f, allow_unicode=True)
+        return path
+
     def test_json_contains_all_entries(self):
-        yaml_path = make_temp_yaml(FIXTURE)
+        yaml_path = self._make_temp_yaml(FIXTURE)
         json_path = yaml_path.replace(".yaml", ".json")
         convert(yaml_path=yaml_path, json_path=json_path, csv_path=None)
         with open(json_path, encoding="utf-8") as f:
@@ -35,7 +40,7 @@ class TestConvertJson(unittest.TestCase):
         self.assertEqual(result[1]["source"], "Book B")
 
     def test_json_field_order(self):
-        yaml_path = make_temp_yaml(FIXTURE)
+        yaml_path = self._make_temp_yaml(FIXTURE)
         json_path = yaml_path.replace(".yaml", ".json")
         convert(yaml_path=yaml_path, json_path=json_path, csv_path=None)
         with open(json_path, encoding="utf-8") as f:
@@ -44,7 +49,7 @@ class TestConvertJson(unittest.TestCase):
 
     def test_json_unicode_preserved(self):
         fixture = [{"time": "01:00", "time_name": "one", "quote": "Time\u2014heals.", "source": "X", "author": "Y"}]
-        yaml_path = make_temp_yaml(fixture)
+        yaml_path = self._make_temp_yaml(fixture)
         json_path = yaml_path.replace(".yaml", ".json")
         convert(yaml_path=yaml_path, json_path=json_path, csv_path=None)
         with open(json_path, encoding="utf-8") as f:
@@ -54,8 +59,21 @@ class TestConvertJson(unittest.TestCase):
 
 class TestConvertCsv(unittest.TestCase):
 
+    def setUp(self):
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.tmpdir_path = self.tmpdir.name
+
+    def tearDown(self):
+        self.tmpdir.cleanup()
+
+    def _make_temp_yaml(self, content):
+        path = os.path.join(self.tmpdir_path, "test.yaml")
+        with open(path, "w", encoding="utf-8") as f:
+            yaml.dump(content, f, allow_unicode=True)
+        return path
+
     def test_csv_row_count(self):
-        yaml_path = make_temp_yaml(FIXTURE)
+        yaml_path = self._make_temp_yaml(FIXTURE)
         csv_path = yaml_path.replace(".yaml", ".csv")
         convert(yaml_path=yaml_path, json_path=None, csv_path=csv_path)
         with open(csv_path, encoding="utf-8") as f:
@@ -63,20 +81,12 @@ class TestConvertCsv(unittest.TestCase):
         self.assertEqual(len(lines), 2)
 
     def test_csv_pipe_delimited_format(self):
-        yaml_path = make_temp_yaml(FIXTURE)
+        yaml_path = self._make_temp_yaml(FIXTURE)
         csv_path = yaml_path.replace(".yaml", ".csv")
         convert(yaml_path=yaml_path, json_path=None, csv_path=csv_path)
         with open(csv_path, encoding="utf-8") as f:
             first_line = f.readline().rstrip("\n")
         self.assertEqual(first_line, "00:00|midnight|Hello.|Book A|Author A")
-
-    def test_csv_no_header(self):
-        yaml_path = make_temp_yaml(FIXTURE)
-        csv_path = yaml_path.replace(".yaml", ".csv")
-        convert(yaml_path=yaml_path, json_path=None, csv_path=csv_path)
-        with open(csv_path, encoding="utf-8") as f:
-            first_line = f.readline()
-        self.assertTrue(first_line.startswith("00:00"))
 
 
 if __name__ == "__main__":
