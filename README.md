@@ -123,17 +123,19 @@ A modern alternative to the multi-script SSH+Launchpad approach. A single file t
 ### Prerequisites
 
 - Kindle jailbroken with [Winterbreak](https://kindlemodding.org)
-- **FBInk** installed via NiLuJe's packages on MobileRead *(optional — see fallback below)*
+- **FBInk** installed — binaries in [NiLuJe's MobileRead thread](https://www.mobileread.com/forums/showthread.php?t=299620), source at [github.com/NiLuJe/FBInk](https://github.com/NiLuJe/FBInk) *(optional — see fallback below)*
 
 ### FBInk path (recommended — no images needed)
 
-Copy three files to the Kindle over USB:
+Connect the Kindle via USB — it appears as a removable drive (e.g. `Kindle (E:)` on Windows). The drive root maps to `/mnt/us/` on the device. Copy three files:
 
-| Source (repo) | Destination (Kindle) |
+| Source (repo) | Destination on Kindle drive |
 |---|---|
-| `KindleScripts/literary_clock.sh` | `/mnt/us/documents/literary_clock.sh` |
-| `litclock_annotated_improved.csv` | `/mnt/us/timelit/litclock.csv` |
-| `LinLibertine_RZ.ttf` (repo root) | `/mnt/us/timelit/LinLibertine_RZ.ttf` |
+| `KindleScripts/literary_clock.sh` | `documents\literary_clock.sh` |
+| `litclock_annotated_improved.csv` | `timelit\litclock.csv` |
+| `LinLibertine_RZ.ttf` (repo root) | `timelit\LinLibertine_RZ.ttf` |
+
+Create the `timelit` folder on the drive if it doesn't exist. The `documents` folder should already be there.
 
 The scriptlet will appear in your Kindle library as **Literary Clock**. Tap it to start the clock. Tap it again to stop.
 
@@ -145,12 +147,12 @@ If FBInk is not installed, the scriptlet automatically falls back to displaying 
 python quote_to_image.py --device basic
 ```
 
-Then copy:
+Then copy to the Kindle drive:
 
-| Source (repo) | Destination (Kindle) |
+| Source (repo) | Destination on Kindle drive |
 |---|---|
-| `KindleScripts/literary_clock.sh` | `/mnt/us/documents/literary_clock.sh` |
-| `images/` folder | `/mnt/us/timelit/images/` |
+| `KindleScripts/literary_clock.sh` | `documents\literary_clock.sh` |
+| `images/` folder | `timelit\images\` |
 
 ### Usage
 
