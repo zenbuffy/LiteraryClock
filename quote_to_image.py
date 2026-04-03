@@ -181,7 +181,7 @@ def render_entry(entry, width, height, font_paths):
     quote_out   = os.path.join('images', f'quote_{time_key}_{idx}.png')
     credits_out = os.path.join('images', 'metadata', f'quote_{time_key}_{idx}_credits.png')
 
-    if os.path.exists(quote_out):
+    if os.path.exists(quote_out) and os.path.exists(credits_out):
         return
 
     margin     = 26
@@ -197,8 +197,12 @@ def render_entry(entry, width, height, font_paths):
         time_start = 0
         time_count = 0
     else:
+        # snap back to the nearest word boundary so a mid-word pos doesn't
+        # cause before.split() to count the preceding partial word
+        while pos > 0 and quote[pos - 1] != ' ':
+            pos -= 1
         before     = quote[:pos]
-        time_start = len(before.split())        # words before the time string
+        time_start = len(before.split())
         time_count = len(timestring.split()) - 1
 
     print(f'Making image for {time_key}_{idx}')
@@ -239,9 +243,9 @@ def main():
         sys.exit(1)
 
     width, height = DEVICE_PRESETS[device]
-    if args.width:
+    if args.width is not None:
         width = args.width
-    if args.height:
+    if args.height is not None:
         height = args.height
 
     regular_path = resolve_font('LinLibertine_RZ.ttf',  'LinLibertine_RZ.otf')
