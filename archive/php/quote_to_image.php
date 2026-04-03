@@ -178,14 +178,6 @@ function InitializeFonts()
     }
 }
 
-function convertToGreyscale($path) {
-    $im = new Imagick();
-    $im->readImage($path);
-    $im->setImageType(Imagick::IMGTYPE_GRAYSCALE);
-    unlink($path);
-    $im->writeImage($path);
-    $im->destroy();
-}
 
 function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author)
 {
@@ -281,13 +273,41 @@ function TurnQuoteIntoImage($time, $quote, $timestring, $title, $author)
 
     imagepng($png_image, $creditsPath);
     imagedestroy($png_image);
-
-    convertToGreyscale($quotePath);
-    convertToGreyscale($creditsPath);
 }
 
 
-function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $timestring_wordcount, $margin)
+// Measures text layout without creating an image. Returns paragraph height, or false if a word is too wide.
+function measureLayout($quote_array, $width, $font_size, $timestringStarts, $timestring_wordcount, $margin)
+{
+    global $font_path_bold;
+    global $font_path;
+
+    $position = [$margin, $margin + $font_size];
+
+    foreach ($quote_array as $key => $word) {
+        $font = ($key >= $timestringStarts && $key <= $timestringStarts + $timestring_wordcount)
+            ? $font_path_bold
+            : $font_path;
+
+        list($textwidth) = measureSizeOfTextbox($font_size, $font, $word . ' ');
+
+        if ($textwidth > ($width - $margin)) {
+            return false; // single word too wide at this size
+        }
+
+        if (($position[0] + $textwidth) >= ($width - $margin)) {
+            $position[0] = $margin;
+            $position[1] += (int)($font_size * 1.618); // golden ratio line height
+        }
+
+        $position[0] += $textwidth;
+    }
+
+    return $position[1];
+}
+
+// Creates the image at a specific font size.
+function renderImage($quote_array, $width, $height, $font_size, $timestringStarts, $timestring_wordcount, $margin)
 {
     global $font_path_bold;
     global $font_path;
@@ -299,7 +319,7 @@ function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $
     $grey  = imagecolorallocate($png_image, 125, 125, 125);
     $black = imagecolorallocate($png_image, 0, 0, 0);
 
-    $position = array($margin, $margin + $font_size);
+    $position = [$margin, $margin + $font_size];
 
     foreach ($quote_array as $key => $word) {
         // use bold + black for the timestring words, grey for the rest
@@ -313,37 +333,36 @@ function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $
 
         list($textwidth) = measureSizeOfTextbox($font_size, $font, $word . ' ');
 
-        // if a single word exceeds image width, stop trying to grow the font
-        if ($textwidth > ($width - $margin)) {
-            imagedestroy($png_image);
-            return false;
-        }
-
-        // wrap to next line if needed
         if (($position[0] + $textwidth) >= ($width - $margin)) {
             $position[0] = $margin;
-            $position[1] = $position[1] + (int)($font_size * 1.618); // golden ratio line height
+            $position[1] += (int)($font_size * 1.618); // golden ratio line height
         }
 
         imagettftext($png_image, $font_size, 0, $position[0], $position[1], $textcolor, $font, $word);
         $position[0] += $textwidth;
     }
 
-    $paragraphHeight = $position[1];
+    return [$png_image, $position[1], $font_size];
+}
 
-    if ($paragraphHeight < $height - 100) { // leaving room for the credits below
-        $result = fitText($quote_array, $width, $height, $font_size + 1, $timestringStarts, $timestring_wordcount, $margin);
-        if ($result !== false) {
-            imagedestroy($png_image); // discard this frame; use the larger-font result
-            return $result;
+function fitText($quote_array, $width, $height, $font_size, $timestringStarts, $timestring_wordcount, $margin)
+{
+    // Find the largest font size that fits using measurements only (no image creation).
+    $best_size = null;
+
+    for ($size = $font_size; ; $size++) {
+        $paragraphHeight = measureLayout($quote_array, $width, $size, $timestringStarts, $timestring_wordcount, $margin);
+        if ($paragraphHeight === false || $paragraphHeight >= $height - 100) {
+            break;
         }
-    } else {
-        // text overflows — caller should try a smaller size
-        imagedestroy($png_image);
+        $best_size = $size;
+    }
+
+    if ($best_size === null) {
         return false;
     }
 
-    return array($png_image, $paragraphHeight, $font_size);
+    return renderImage($quote_array, $width, $height, $best_size, $timestringStarts, $timestring_wordcount, $margin);
 }
 
 function measureSizeOfTextbox($font_size, $font_path, $text)
