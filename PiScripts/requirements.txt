@@ -1,0 +1,7 @@
+pillow
+pytz
+
+# Install one of the following depending on your display:
+# pip3 install inky                   (Pimoroni Inky pHAT / wHAT / Impression)
+# pip3 install IT8951                 (IT8951-based 10.3" panels)
+# Waveshare: clone https://github.com/waveshare/e-Paper and follow their setup guide

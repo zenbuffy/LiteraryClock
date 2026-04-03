@@ -118,6 +118,8 @@ The scripts in `PiScripts/` run on a Raspberry Pi with an e-ink HAT, and are dep
 
 ## Prerequisites
 
+Enable SPI on the Pi if you haven't already: `sudo raspi-config` → Interface Options → SPI → Enable.
+
 Install Python dependencies on the Pi:
 
 ```
@@ -144,7 +146,7 @@ scp -r images/ pi@raspberrypi.local:/home/pi/timelit/
 ## Setup
 
 1. Copy `PiScripts/timelit.py` to `/home/pi/timelit/PiScripts/timelit.py` on the Pi.
-2. Edit the config block at the top of `timelit.py` — set `DISPLAY_TYPE`, `CLOCK_DIR`, `IMAGES_DIR`, and `TIMEZONE`.
+2. Edit the config block at the top of `timelit.py` — set `DISPLAY_TYPE`, `CLOCK_DIR`, `IMAGES_DIR` (must point to wherever you copied the images), and `TIMEZONE`.
 3. Enable the clock by creating the flag file:
    ```
    touch /home/pi/timelit/clockisticking
