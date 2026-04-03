@@ -57,6 +57,16 @@ The following preconfigured sizes exist:
 | `elipsa` | Kobo Elipsa 2E | 1404 × 1872 |
 | `remarkable` | reMarkable 2 | 1404 × 1872 |
 | `remarkablepro` | reMarkable Paper Pro | 1620 × 2160 |
+| `inkyphat` | Inky pHAT (portrait) | 104 × 212 |
+| `inkyphat_l` | Inky pHAT (landscape) | 212 × 104 |
+| `inkywhat` | Inky wHAT (portrait) | 300 × 400 |
+| `inkywhat_l` | Inky wHAT (landscape) | 400 × 300 |
+| `inkyimpression` | Inky Impression (portrait) | 448 × 600 |
+| `inkyimpression_l` | Inky Impression (landscape) | 600 × 448 |
+| `waveshare75` | Waveshare 7.5" (portrait) | 480 × 800 |
+| `waveshare75_l` | Waveshare 7.5" (landscape) | 800 × 480 |
+| `it8951` | IT8951 10.3" (portrait) | 1404 × 1872 |
+| `it8951_l` | IT8951 10.3" (landscape) | 1872 × 1404 |
 
 You can also set a custom image size using the "custom" argument and providing the width and height immediately after, e.g.
 
@@ -101,6 +111,61 @@ This script briefly enables WiFi to allow the Kindle's NTP client to sync the sy
 ```
 
 This runs the sync at 05:55, giving it time to complete before the clock resumes at 06:00.
+
+# Pi Scripts
+
+The scripts in `PiScripts/` run on a Raspberry Pi with an e-ink HAT, and are deployed to `/home/pi/timelit/` on the device (the path is configurable).
+
+## Prerequisites
+
+Install Python dependencies on the Pi:
+
+```
+pip3 install pillow pytz
+```
+
+Then install the library for your display:
+
+| Display | Library |
+|---|---|
+| Inky (pHAT / wHAT / Impression) | `pip3 install inky` |
+| Waveshare | Clone [waveshare/e-Paper](https://github.com/waveshare/e-Paper), see note in script |
+| IT8951-based panels | `pip3 install IT8951` |
+
+## Generating images for your Pi display
+
+Run `quote_to_image.php` with the preset for your display (see Custom Image Sizes table above), then copy the generated `images/` folder to your Pi:
+
+```
+php quote_to_image.php waveshare75
+scp -r images/ pi@raspberrypi.local:/home/pi/timelit/
+```
+
+## Setup
+
+1. Copy `PiScripts/timelit.py` to `/home/pi/timelit/PiScripts/timelit.py` on the Pi.
+2. Edit the config block at the top of `timelit.py` — set `DISPLAY_TYPE`, `CLOCK_DIR`, `IMAGES_DIR`, and `TIMEZONE`.
+3. Enable the clock by creating the flag file:
+   ```
+   touch /home/pi/timelit/clockisticking
+   ```
+   Remove this file at any time to pause the clock without touching cron.
+4. Add the cron entry to run the script every minute:
+   ```
+   * * * * * /usr/bin/python3 /home/pi/timelit/PiScripts/timelit.py
+   ```
+
+## timelit.py
+
+This is the main display script, called every minute by cron.
+
+**Display type** — Set `DISPLAY_TYPE` to `"inky"`, `"waveshare"`, or `"it8951"` to match your hardware. Each branch contains comments for library installation and, where relevant, notes on adapting it to different module sizes within the same family.
+
+**Timezone** — Set `TIMEZONE` to a tz database name matching your location (e.g. `Europe/London`, `America/New_York`).
+
+**Sleep hours** — The script exits without updating the display between `SLEEP_START` and `SLEEP_END` to save power. The e-ink screen holds the last image without drawing any power. Defaults to 1am–6am.
+
+**clockisticking** — The script checks for a flag file at `CLOCK_DIR/clockisticking` before doing anything. If the file is absent, the script exits immediately. This lets you pause the clock without modifying cron.
 
 # CSV file
 I've begun filling in some extra times with books I enjoy. In some cases, I've simply added to times where there already were some entries, to include books I like. I have also added some entries where times did not exist already.
