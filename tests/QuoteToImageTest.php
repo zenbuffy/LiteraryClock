@@ -92,6 +92,80 @@ class QuoteToImageTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
+    // Pi e-ink presets
+    // -------------------------------------------------------------------------
+
+    public function testSetDeviceInkyPhat(): void
+    {
+        setDevice(['script', 'inkyphat']);
+        $this->assertSame(104, $GLOBALS['deviceWidth']);
+        $this->assertSame(212, $GLOBALS['deviceHeight']);
+    }
+
+    public function testSetDeviceInkyPhatLandscape(): void
+    {
+        setDevice(['script', 'inkyphat_l']);
+        $this->assertSame(212, $GLOBALS['deviceWidth']);
+        $this->assertSame(104, $GLOBALS['deviceHeight']);
+    }
+
+    public function testSetDeviceInkyWHat(): void
+    {
+        setDevice(['script', 'inkywhat']);
+        $this->assertSame(300, $GLOBALS['deviceWidth']);
+        $this->assertSame(400, $GLOBALS['deviceHeight']);
+    }
+
+    public function testSetDeviceInkyWHatLandscape(): void
+    {
+        setDevice(['script', 'inkywhat_l']);
+        $this->assertSame(400, $GLOBALS['deviceWidth']);
+        $this->assertSame(300, $GLOBALS['deviceHeight']);
+    }
+
+    public function testSetDeviceInkyImpression(): void
+    {
+        setDevice(['script', 'inkyimpression']);
+        $this->assertSame(448, $GLOBALS['deviceWidth']);
+        $this->assertSame(600, $GLOBALS['deviceHeight']);
+    }
+
+    public function testSetDeviceInkyImpressionLandscape(): void
+    {
+        setDevice(['script', 'inkyimpression_l']);
+        $this->assertSame(600, $GLOBALS['deviceWidth']);
+        $this->assertSame(448, $GLOBALS['deviceHeight']);
+    }
+
+    public function testSetDeviceWaveshare75(): void
+    {
+        setDevice(['script', 'waveshare75']);
+        $this->assertSame(480, $GLOBALS['deviceWidth']);
+        $this->assertSame(800, $GLOBALS['deviceHeight']);
+    }
+
+    public function testSetDeviceWaveshare75Landscape(): void
+    {
+        setDevice(['script', 'waveshare75_l']);
+        $this->assertSame(800, $GLOBALS['deviceWidth']);
+        $this->assertSame(480, $GLOBALS['deviceHeight']);
+    }
+
+    public function testSetDeviceIT8951(): void
+    {
+        setDevice(['script', 'it8951']);
+        $this->assertSame(1404, $GLOBALS['deviceWidth']);
+        $this->assertSame(1872, $GLOBALS['deviceHeight']);
+    }
+
+    public function testSetDeviceIT8951Landscape(): void
+    {
+        setDevice(['script', 'it8951_l']);
+        $this->assertSame(1872, $GLOBALS['deviceWidth']);
+        $this->assertSame(1404, $GLOBALS['deviceHeight']);
+    }
+
+    // -------------------------------------------------------------------------
     // Smoke test — skipped locally if GD or Imagick are unavailable
     // -------------------------------------------------------------------------
 

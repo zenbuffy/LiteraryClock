@@ -103,6 +103,46 @@ function setDevice($argv) {
             // reMarkable Paper Pro, 11.8"
             $deviceWidth = 1620;
             $deviceHeight = 2160;
+        } elseif ($device == "INKYPHAT") {
+            // Inky pHAT (portrait)
+            $deviceWidth = 104;
+            $deviceHeight = 212;
+        } elseif ($device == "INKYPHAT_L") {
+            // Inky pHAT (landscape)
+            $deviceWidth = 212;
+            $deviceHeight = 104;
+        } elseif ($device == "INKYWHAT") {
+            // Inky wHAT (portrait)
+            $deviceWidth = 300;
+            $deviceHeight = 400;
+        } elseif ($device == "INKYWHAT_L") {
+            // Inky wHAT (landscape)
+            $deviceWidth = 400;
+            $deviceHeight = 300;
+        } elseif ($device == "INKYIMPRESSION") {
+            // Inky Impression (portrait)
+            $deviceWidth = 448;
+            $deviceHeight = 600;
+        } elseif ($device == "INKYIMPRESSION_L") {
+            // Inky Impression (landscape)
+            $deviceWidth = 600;
+            $deviceHeight = 448;
+        } elseif ($device == "WAVESHARE75") {
+            // Waveshare 7.5" (portrait)
+            $deviceWidth = 480;
+            $deviceHeight = 800;
+        } elseif ($device == "WAVESHARE75_L") {
+            // Waveshare 7.5" (landscape)
+            $deviceWidth = 800;
+            $deviceHeight = 480;
+        } elseif ($device == "IT8951") {
+            // IT8951 10.3" e-ink panel (portrait)
+            $deviceWidth = 1404;
+            $deviceHeight = 1872;
+        } elseif ($device == "IT8951_L") {
+            // IT8951 10.3" e-ink panel (landscape)
+            $deviceWidth = 1872;
+            $deviceHeight = 1404;
         } elseif ($device == "CUSTOM") {
             $deviceWidth = $argv[2];
             $deviceHeight = $argv[3];
