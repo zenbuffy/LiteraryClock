@@ -116,6 +116,49 @@ This script briefly enables WiFi to allow the Kindle's NTP client to sync the sy
 
 This runs the sync at 05:55, giving it time to complete before the clock resumes at 06:00.
 
+## literary_clock.sh (Scriptlet)
+
+A modern alternative to the multi-script SSH+Launchpad approach. A single file that appears in your Kindle's library and runs when tapped — no SSH, no Launchpad, no pre-generated images required (when FBInk is available).
+
+### Prerequisites
+
+- Kindle jailbroken with [Winterbreak](https://kindlemodding.org)
+- **FBInk** installed via NiLuJe's packages on MobileRead *(optional — see fallback below)*
+
+### FBInk path (recommended — no images needed)
+
+Copy three files to the Kindle over USB:
+
+| Source (repo) | Destination (Kindle) |
+|---|---|
+| `KindleScripts/literary_clock.sh` | `/mnt/us/documents/literary_clock.sh` |
+| `litclock_annotated_improved.csv` | `/mnt/us/timelit/litclock.csv` |
+| `LinLibertine_RZ.ttf` (repo root) | `/mnt/us/timelit/LinLibertine_RZ.ttf` |
+
+The scriptlet will appear in your Kindle library as **Literary Clock**. Tap it to start the clock. Tap it again to stop.
+
+### eips fallback path (no FBInk required)
+
+If FBInk is not installed, the scriptlet automatically falls back to displaying pre-generated PNG images via `eips`. First generate images for your device (see Image Generation table above for presets):
+
+```bash
+python quote_to_image.py --device basic
+```
+
+Then copy:
+
+| Source (repo) | Destination (Kindle) |
+|---|---|
+| `KindleScripts/literary_clock.sh` | `/mnt/us/documents/literary_clock.sh` |
+| `images/` folder | `/mnt/us/timelit/images/` |
+
+### Usage
+
+- **Start clock:** tap *Literary Clock* in your library
+- **Stop clock:** navigate home, tap *Literary Clock* again
+- The display updates at each minute boundary
+- Timezone is read from the Kindle system clock (set via your Amazon account)
+
 # Pi Scripts
 
 The scripts in `PiScripts/` run on a Raspberry Pi with an e-ink HAT, and are deployed to `/home/pi/timelit/` on the device (the path is configurable).
