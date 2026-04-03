@@ -132,7 +132,7 @@ Connect the Kindle via USB — it appears as a removable drive (e.g. `Kindle (E:
 | Source (repo) | Destination on Kindle drive |
 |---|---|
 | `KindleScripts/literary_clock.sh` | `documents\literary_clock.sh` |
-| `litclock_annotated_improved.csv` | `timelit\litclock.csv` |
+| `litclock_annotated_improved.csv` | `timelit\litclock_annotated_improved.csv` |
 | `LinLibertine_RZ.ttf` (repo root) | `timelit\LinLibertine_RZ.ttf` |
 
 Create the `timelit` folder on the drive if it doesn't exist. The `documents` folder should already be there.

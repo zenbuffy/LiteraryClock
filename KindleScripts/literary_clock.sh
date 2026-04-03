@@ -3,7 +3,7 @@
 # DontUseFBInk: true
 
 PID_FILE=/tmp/literary_clock.pid
-CSV=/mnt/us/timelit/litclock.csv
+CSV=/mnt/us/timelit/litclock_annotated_improved.csv
 FONT=/mnt/us/timelit/LinLibertine_RZ.ttf
 IMAGES=/mnt/us/timelit/images
 
