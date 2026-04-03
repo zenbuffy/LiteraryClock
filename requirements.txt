@@ -1,1 +1,2 @@
 pyyaml
+Pillow>=9.2
