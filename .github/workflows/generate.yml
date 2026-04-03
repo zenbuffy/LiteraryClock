@@ -18,10 +18,10 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Python dependencies
-      run: pip install pyyaml
+      run: pip install pyyaml Pillow
 
     - name: Run Python tests
-      run: python -m unittest test_insert_quote test_yaml_to_formats -v
+      run: python -m unittest test_insert_quote test_yaml_to_formats test_quote_to_image -v
 
   generate-data:
     runs-on: ubuntu-latest
@@ -61,6 +61,6 @@ jobs:
 
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        file_pattern: 'images/*'
+        file_pattern: 'images/**'
         skip_dirty_check: true
         commit_message: Update images dir

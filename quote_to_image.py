@@ -109,22 +109,24 @@ def render_image(words, width, height, font_size, time_start, time_count, margin
     return img
 
 
-def fit_text(words, width, height, font_size, time_start, time_count, margin,
+def fit_text(words, width, height, time_start, time_count, margin,
              regular_path, bold_path):
     """
     Find the largest font size where text fits within height - 100.
     Returns a rendered PIL Image, or None if the minimum size doesn't fit.
     """
+    low, high = 18, 300
     best = None
-    size = font_size
 
-    while True:
-        h = measure_layout(words, width, size, time_start, time_count, margin,
+    while low <= high:
+        mid = (low + high) // 2
+        h = measure_layout(words, width, mid, time_start, time_count, margin,
                            regular_path, bold_path)
-        if h is None or h >= height - 100:
-            break
-        best = size
-        size += 1
+        if h is not None and h < height - 100:
+            best = mid
+            low = mid + 1
+        else:
+            high = mid - 1
 
     if best is None:
         return None
@@ -168,7 +170,7 @@ def _draw_credits(img, width, height, margin, credit_path, source, author):
                   full_text, font=credit_font, fill=0, anchor='ls')
 
 
-def render_entry(entry, width, height, font_paths):
+def render_entry(entry, width, height, font_paths, save_without_credits=False):
     """
     Render quote and credits images for one entry.
     Top-level function (required for multiprocessing pickling).
@@ -181,7 +183,9 @@ def render_entry(entry, width, height, font_paths):
     quote_out   = os.path.join('images', f'quote_{time_key}_{idx}.png')
     credits_out = os.path.join('images', 'metadata', f'quote_{time_key}_{idx}_credits.png')
 
-    if os.path.exists(quote_out) and os.path.exists(credits_out):
+    credits_done = os.path.exists(credits_out)
+    quote_done   = os.path.exists(quote_out) if save_without_credits else True
+    if credits_done and quote_done:
         return
 
     margin     = 26
@@ -207,14 +211,15 @@ def render_entry(entry, width, height, font_paths):
 
     print(f'Making image for {time_key}_{idx}')
 
-    img = fit_text(words, width, height, 18, time_start, time_count, margin,
+    img = fit_text(words, width, height, time_start, time_count, margin,
                    regular_path, bold_path)
     if img is None:
         print(f'WARNING: could not fit text for {time_key}_{idx}, skipping',
               file=sys.stderr)
         return
 
-    img.save(quote_out)
+    if save_without_credits:
+        img.save(quote_out)
 
     _draw_credits(img, width, height, margin, credit_path,
                   entry['source'].strip(), entry['author'].strip())
@@ -234,6 +239,8 @@ def main():
                         help='Include NSFW quotes (omitted by default)')
     parser.add_argument('--workers', type=int, default=cpu_count(),
                         help='Parallel worker processes (default: CPU count)')
+    parser.add_argument('--without-credits', action='store_true', dest='save_without_credits',
+                        help='Also save quote images without credits')
     args = parser.parse_args()
 
     device = args.device.lower()
@@ -275,7 +282,8 @@ def main():
         tasks.append({**entry, 'idx': idx})
 
     font_paths = (regular_path, bold_path, credit_path)
-    worker     = partial(render_entry, width=width, height=height, font_paths=font_paths)
+    worker     = partial(render_entry, width=width, height=height, font_paths=font_paths,
+                         save_without_credits=args.save_without_credits)
 
     with Pool(args.workers) as pool:
         pool.map(worker, tasks)
