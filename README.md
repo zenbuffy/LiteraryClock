@@ -6,11 +6,10 @@ Jaap Meijers shared instructions to create a literary clock using an old Kindle 
 I wanted to make some changes to the scripts, and to the provided CSV files.
 
 # Prerequisites
-To get the PHP script working on my Linux box, I need to install the following php packages:
-* php-cli
-* php-gd
-* php-imagick
-* imagemagick
+
+```bash
+pip install "Pillow>=9.2" pyyaml
+```
 
 The Linux Libertine fonts are included in the repository root, so no separate font download is needed.
 
@@ -34,21 +33,30 @@ Quotes are marked as safe for work (SFW) by default. Use `--nsfw` to flag a quot
 $ ./insert_quote.py --nsfw --time '23:00' --time_human '11 pm' --source 'Some Book' --author 'Some Author' "An adult quote."
 ```
 
-# Custom Image Sizes
-The image generator now supports custom and pre-configured alternative image sizes. The default size will remain the old Kindle size (600 x 800) but you now have the option to run the script with command line arguments to choose from preconfigured sizes or set your own. 
+# Image Generation
 
-To use this, simply add your command line argument after the php file when you run it, e.g.
+Run `quote_to_image.py` to generate images. By default it generates for the original Kindle size (600 × 800):
 
-`php quote_to_image.php paperwhite`
+```bash
+python quote_to_image.py
+```
 
-The following preconfigured sizes exist:
+Use `--device` to select a preset, or `--width`/`--height` to set a custom size:
 
-| Argument | Device | Resolution |
-|----------|--------|------------|
-| *(none)* | Kindle 1st–4th gen (default) | 600 × 800 |
+```bash
+python quote_to_image.py --device paperwhite
+python quote_to_image.py --width 750 --height 1024
+python quote_to_image.py --workers 8   # parallel workers, defaults to CPU count
+```
+
+The following device presets are available:
+
+| `--device` | Device | Resolution |
+|------------|--------|------------|
+| *(none / `kindle`)* | Kindle 1st–4th gen (default) | 600 × 800 |
 | `paperwhite` | Kindle Paperwhite 1–3 (older) | 758 × 1024 |
 | `paperwhite5` | Kindle Paperwhite 11th gen (2021) | 1236 × 1648 |
-| `kindle` / `basic` | Kindle 11th gen (2022) | 1072 × 1448 |
+| `basic` | Kindle 11th gen (2022) | 1072 × 1448 |
 | `oasis` | Kindle Oasis (10th gen) | 1264 × 1680 |
 | `scribe` | Kindle Scribe | 1860 × 2480 |
 | `clara` | Kobo Clara 2E / Clara BW | 1072 × 1448 |
@@ -68,18 +76,14 @@ The following preconfigured sizes exist:
 | `it8951` | IT8951 10.3" (portrait) | 1404 × 1872 |
 | `it8951_l` | IT8951 10.3" (landscape) | 1872 × 1404 |
 
-You can also set a custom image size using the "custom" argument and providing the width and height immediately after, e.g.
-
-`php quote_to_image.php custom 750 1024`
-
 # Content Filtering
 
 By default, the image generator skips quotes marked as not safe for work (NSFW). To generate images for all quotes including NSFW ones, pass the `--all` flag:
 
-```
-php quote_to_image.php --all
-php quote_to_image.php paperwhite --all
-php quote_to_image.php custom 750 1024 --all
+```bash
+python quote_to_image.py --all
+python quote_to_image.py --device paperwhite --all
+python quote_to_image.py --width 750 --height 1024 --all
 ```
 
 Note: quotes imported from the original data set predate this classification and are treated as SFW. Only quotes sourced from the [literature-clock](https://github.com/flisoldf/literature-clock) project carry explicit `sfw: yes/no` metadata.
@@ -136,10 +140,10 @@ Then install the library for your display:
 
 ## Generating images for your Pi display
 
-Run `quote_to_image.php` with the preset for your display (see Custom Image Sizes table above), then copy the generated `images/` folder to your Pi:
+Run `quote_to_image.py` with the preset for your display (see Image Generation table above), then copy the generated `images/` folder to your Pi:
 
-```
-php quote_to_image.php waveshare75
+```bash
+python quote_to_image.py --device waveshare75
 scp -r images/ pi@raspberrypi.local:/home/pi/timelit/
 ```
 
