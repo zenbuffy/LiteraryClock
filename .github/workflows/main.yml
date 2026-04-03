@@ -58,7 +58,6 @@ jobs:
         file_pattern: 'images/*'
         skip_dirty_check: true
         commit_message: Update images dir
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   generate-data:
     runs-on: ubuntu-latest
@@ -78,4 +77,3 @@ jobs:
       with:
         file_pattern: 'litclock.json litclock_annotated_improved.csv'
         commit_message: Update generated data files
-        repo-token: ${{ secrets.GITHUB_TOKEN }}

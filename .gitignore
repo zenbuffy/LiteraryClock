@@ -5,3 +5,4 @@ quote_to_image.php.bak
 vendor/
 docs/superpowers/
 __pycache__/
+/tempscripts
