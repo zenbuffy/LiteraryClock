@@ -19,16 +19,3 @@ jobs:
     - name: Run Python tests
       run: python -m unittest test_insert_quote test_yaml_to_formats -v
 
-  test-php:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install PHP extensions
-      run: sudo apt-get install -y php-gd php-imagick
-
-    - name: Install PHP dependencies
-      run: composer install --optimize-autoloader
-
-    - name: Run PHP tests
-      run: vendor/bin/phpunit --no-coverage

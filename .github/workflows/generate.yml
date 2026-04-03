@@ -23,20 +23,6 @@ jobs:
     - name: Run Python tests
       run: python -m unittest test_insert_quote test_yaml_to_formats -v
 
-  test-php:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install PHP extensions
-      run: sudo apt-get install -y php-gd php-imagick
-
-    - name: Install PHP dependencies
-      run: composer install --optimize-autoloader
-
-    - name: Run PHP tests
-      run: vendor/bin/phpunit --no-coverage
-
   generate-data:
     runs-on: ubuntu-latest
 
@@ -58,23 +44,20 @@ jobs:
 
   generate-images:
     runs-on: ubuntu-latest
-    needs: [test-python, test-php, generate-data]
+    needs: [test-python, generate-data]
 
     steps:
     - uses: actions/checkout@v2
       with:
         ref: ${{ github.head_ref || github.ref_name }}
 
-    - name: Install PHP extensions
-      run: sudo apt-get install -y php-gd php-imagick
-
-    - name: Install PHP dependencies
-      run: composer install --no-dev --optimize-autoloader
+    - name: Install Python dependencies
+      run: pip install pyyaml "Pillow>=9.2"
 
     - name: Generate images
       run: |
         rm -rf images && \
-        php quote_to_image.php
+        python quote_to_image.py
 
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
