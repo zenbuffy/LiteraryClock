@@ -10,6 +10,10 @@ from multiprocessing import Pool, cpu_count
 import yaml
 from PIL import Image, ImageDraw, ImageFont
 
+# PHP GD renders TrueType at 96 DPI; Pillow renders at 72 DPI.
+# Multiply point sizes by this factor so rendered pixel sizes match PHP output.
+_FONT_SCALE = 96 / 72
+
 DEVICE_PRESETS = {
     'kindle':           (600,  800),
     'basic':            (1072, 1448),
@@ -52,8 +56,8 @@ def measure_layout(words, width, font_size, time_start, time_count, margin,
     Simulate word layout at font_size without creating an image.
     Returns the final y position (paragraph height), or None if a single word is too wide.
     """
-    regular = ImageFont.truetype(regular_path, font_size)
-    bold    = ImageFont.truetype(bold_path,    font_size)
+    regular = ImageFont.truetype(regular_path, round(font_size * _FONT_SCALE))
+    bold    = ImageFont.truetype(bold_path,    round(font_size * _FONT_SCALE))
 
     x = margin
     y = margin + font_size
@@ -80,8 +84,8 @@ def render_image(words, width, height, font_size, time_start, time_count, margin
     Render words onto a greyscale PIL Image at the given font_size.
     Time-string words: black + bold. All others: grey + regular.
     """
-    regular = ImageFont.truetype(regular_path, font_size)
-    bold    = ImageFont.truetype(bold_path,    font_size)
+    regular = ImageFont.truetype(regular_path, round(font_size * _FONT_SCALE))
+    bold    = ImageFont.truetype(bold_path,    round(font_size * _FONT_SCALE))
 
     img  = Image.new('L', (width, height), 255)
     draw = ImageDraw.Draw(img)
@@ -138,7 +142,7 @@ def fit_text(words, width, height, time_start, time_count, margin,
 def _draw_credits(img, width, height, margin, credit_path, source, author):
     """Draw right-aligned credits onto img in-place."""
     draw        = ImageDraw.Draw(img)
-    credit_font = ImageFont.truetype(credit_path, 18)
+    credit_font = ImageFont.truetype(credit_path, round(18 * _FONT_SCALE))
     em_dash     = '\u2014'
     credits     = f'{source}, {author}'
     full_text   = f'{em_dash}{credits}'
