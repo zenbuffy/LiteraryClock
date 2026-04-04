@@ -70,7 +70,7 @@ run_clock() {
 
         else
             # --- eips fallback path ---
-            MATCHES=$(ls "${IMAGES}/quote_${TIME_KEY}_"*.png 2>/dev/null)
+            MATCHES=$(ls "${IMAGES}/metadata/quote_${TIME_KEY}_"*_credits.png 2>/dev/null)
 
             if [ -z "$MATCHES" ]; then
                 log "no images for $TIME_KEY, sleeping"
